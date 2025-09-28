@@ -1,0 +1,21 @@
+{
+  "name": "Urban Cars Conductores",
+  "short_name": "Urban Cars",
+  "description": "Panel de reportes para conductores de Urban Cars",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#FFD500",
+  "theme_color": "#FFD500",
+  "icons": [
+    {
+      "src": "icons/Icon-192-yellow.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/Icon-512-yellow.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

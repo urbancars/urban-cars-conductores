@@ -1,0 +1,40 @@
+# Flutter / Dart / Pub
+.dart_tool/
+.packages
+.pub-cache/
+pubspec.lock
+
+# Build outputs
+build/
+ios/Pods/
+android/.gradle/
+android/app/build/
+android/local.properties
+
+# Firebase Hosting / Node
+firebase-debug.log
+node_modules/
+.functions/
+
+# IDE / Editors
+.vscode/
+.idea/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Secrets (make sure not to push these!)
+google-services.json
+GoogleService-Info.plist
+.env
+*.keys
+
+# Apps Script (if you pull/export with clasp)
+.clasp.json
+appsscript.json
+
+# Coverage / Logs
+coverage/
+*.log

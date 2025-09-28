@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta content="IE=Edge" http-equiv="X-UA-Compatible" />
+    <meta name="description" content="Urban Cars Conductores - Reportes de viajes, ganancias y depósitos para conductores." />
+
+    <base href="/" />
+
+    <title>Urban Cars Conductores</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#FFD500" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+
+    <!-- Flutter service worker var -->
+    <script>var serviceWorkerVersion = null;</script>
+    <script src="flutter.js" defer></script>
+
+    <!-- Hide splash when Flutter renders -->
+    <script>
+      window.addEventListener('flutter-first-frame', function () {
+        const splash = document.getElementById('loading');
+        if (splash) splash.style.display = 'none';
+      });
+    </script>
+
+    <style>
+      #loading {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #FFD500; /* Urban Cars yellow */
+      }
+      #loading img {
+        width: clamp(96px, 28vw, 180px);
+        height: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ✅ Splash: only icon -->
+    <div id="loading">
+      <img src="icons/start.png"
+           alt="Urban Cars Splash"
+           onerror="this.onerror=null;this.src='icons/Icon-192.png';" />
+    </div>
+
+    <!-- Start Flutter app -->
+    <script>
+      window.addEventListener('load', function () {
+        if (!window._flutter) { console.error('flutter.js not loaded'); return; }
+        _flutter.loader
+          .loadEntrypoint({ serviceWorker: { serviceWorkerVersion } })
+          .then(engine => engine.initializeEngine())
+          .then(app => app.runApp());
+      });
+    </script>
+  </body>
+</html>
