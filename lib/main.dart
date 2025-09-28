@@ -1,86 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'reportes_page.dart';
-import 'login_page.dart';
+import 'ui/login/login_page.dart';
+import 'ui/reportes/reportes_page.dart';
+import 'ui/pagos/pagos_page.dart';
+import 'ui/goal_bonus/goal_bonus_page.dart';
+import 'ui/reportes_semanales/reporte_semanal_page.dart';
+import 'ui/balance/balance_page.dart';
 
 void main() {
-  runApp(const UrbanCarsApp());
+  runApp(const MyApp());
 }
 
-class UrbanCarsApp extends StatelessWidget {
-  const UrbanCarsApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Urban Cars Conductores',
-      theme: ThemeData(
-        primarySwatch: Colors.amber,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: const StartupPage(),
-      debugShowCheckedModeBanner: false,
-    );
-  }
-}
-
-class StartupPage extends StatefulWidget {
-  const StartupPage({super.key});
-
-  @override
-  State<StartupPage> createState() => _StartupPageState();
-}
-
-class _StartupPageState extends State<StartupPage> {
-  bool _loading = true;
-  String? _documento;
-  String? _conductor;
-  String? _conductorId;
-
-  @override
-  void initState() {
-    super.initState();
-    _checkLogin();
-  }
-
-  Future<void> _checkLogin() async {
-    final prefs = await SharedPreferences.getInstance();
-    final doc = prefs.getString("documento");
-    final name = prefs.getString("conductor");
-    final id = prefs.getString("conductor_id");
-
-    // ✅ Require all 3 values, otherwise force login
-    if (doc != null && doc.isNotEmpty &&
-        name != null && name.isNotEmpty &&
-        id != null && id.isNotEmpty) {
-      setState(() {
-        _documento = doc;
-        _conductor = name;
-        _conductorId = id;
-        _loading = false;
-      });
-    } else {
-      setState(() {
-        _loading = false;
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_loading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    // ✅ If all values exist → ReportesPage, else LoginPage
-    if (_documento != null && _conductor != null && _conductorId != null) {
-      return ReportesPage(
-
-      );
-    } else {
-      return const LoginPage();
-    }
+return MaterialApp(
+  debugShowCheckedModeBanner: false,
+  title: 'Urban Cars Conductores',
+  theme: ThemeData(primarySwatch: Colors.yellow),
+  initialRoute: '/',
+  routes: {
+    '/': (context) => const LoginPage(),
+    '/reportes': (context) {
+      final args = ModalRoute.of(context)!.settings.arguments as Map;
+      return ReportesPage(driverId: args['driverId']);
+    },
+    '/pagos': (context) => const PagosPage(),
+    '/balance': (context) => const BalancePage(),
+    '/goal_bonus': (context) => const GoalBonusPage(),
+    '/reportes_semanales': (context) => ReportesSemanalesPage(),
+  },
+);
   }
 }
