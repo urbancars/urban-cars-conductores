@@ -6,21 +6,31 @@ function doGet(e) {
     return getDriverByDocumento(documento);
   }
 
-  const driverId = e.parameter.driverId ? String(e.parameter.driverId).trim() : null;
-  if (!driverId) {
-    return ContentService.createTextOutput(
-      JSON.stringify({ error: "driverId required" })
-    ).setMimeType(ContentService.MimeType.JSON);
-  }
-
   if (type === "reportes") {
-    const days = e.parameter.days ? parseInt(e.parameter.days, 10) : 14;
+    const driverId = e.parameter.driverId;
+    const days = e.parameter.days ? parseInt(e.parameter.days) : 14;
     return getReportes(driverId, days);
   }
-  if (type === "pagos") return getPagos(driverId);
-  if (type === "balance") return getBalance(driverId);
-  if (type === "goal_bonus") return getGoalBonus(driverId);
-  if (type === "reporte_semanal") return getReporteSemanal(driverId);
+
+  if (type === "pagos") {
+    const driverId = e.parameter.driverId;
+    return getPagos(driverId);
+  }
+
+  if (type === "balance") {
+    const driverId = e.parameter.driverId;
+    return getBalance(driverId);
+  }
+
+  if (type === "goal_bonus") {
+    const driverId = e.parameter.driverId;
+    return getGoalBonus(driverId);
+  }
+
+  if (type === "reporte_semanal") {
+    const driverId = e.parameter.driverId;
+    return getReporteSemanal(driverId);
+  }
 
   return ContentService.createTextOutput(
     JSON.stringify({ error: "Invalid type" })
@@ -28,7 +38,7 @@ function doGet(e) {
 }
 
 /**
- * 🔹 DRIVER LOOKUP
+ * 🔹 DRIVER LOOKUP BY DOCUMENTO
  */
 function getDriverByDocumento(documento) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -45,21 +55,23 @@ function getDriverByDocumento(documento) {
     if (String(row[docIdx]).trim() === String(documento).trim()) {
       return ContentService.createTextOutput(
         JSON.stringify({
-          conductor_id: String(row[idIdx]).trim(),
-          conductor: row[nameIdx],
-          documento: row[docIdx],
+          driver: {
+            conductor_id: row[idIdx],
+            conductor: row[nameIdx],
+            documento: row[docIdx],
+          }
         })
       ).setMimeType(ContentService.MimeType.JSON);
     }
   }
 
   return ContentService.createTextOutput(
-    JSON.stringify({})
+    JSON.stringify({ driver: null })
   ).setMimeType(ContentService.MimeType.JSON);
 }
 
 /**
- * 🔹 REPORTES
+ * 🔹 REPORTES — FILTER BY DRIVER ID & LAST N DAYS
  */
 function getReportes(driverId, days) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -81,7 +93,6 @@ function getReportes(driverId, days) {
 
   return ContentService.createTextOutput(
     JSON.stringify({
-      conductor_id: driverId,
       reportes: rows.map(r => {
         const obj = {};
         headers.forEach((h, i) => obj[h] = r[i]);
@@ -95,49 +106,98 @@ function getReportes(driverId, days) {
  * 🔹 PAGOS
  */
 function getPagos(driverId) {
-  return getBySheet("pagos", driverId);
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName("pagos");
+  const values = sheet.getDataRange().getValues();
+  const headers = values[0];
+  const idIdx = headers.indexOf("conductor_id");
+
+  const rows = values.slice(1).filter(row =>
+    String(row[idIdx]).trim() === String(driverId).trim()
+  );
+
+  return ContentService.createTextOutput(
+    JSON.stringify({
+      pagos: rows.map(r => {
+        const obj = {};
+        headers.forEach((h, i) => obj[h] = r[i]);
+        return obj;
+      })
+    })
+  ).setMimeType(ContentService.MimeType.JSON);
 }
 
 /**
  * 🔹 BALANCE
  */
 function getBalance(driverId) {
-  return getBySheet("balance", driverId);
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName("balance");
+  const values = sheet.getDataRange().getValues();
+  const headers = values[0];
+  const idIdx = headers.indexOf("conductor_id");
+
+  const rows = values.slice(1).filter(row =>
+    String(row[idIdx]).trim() === String(driverId).trim()
+  );
+
+  return ContentService.createTextOutput(
+    JSON.stringify({
+      balance: rows.map(r => {
+        const obj = {};
+        headers.forEach((h, i) => obj[h] = r[i]);
+        return obj;
+      })
+    })
+  ).setMimeType(ContentService.MimeType.JSON);
 }
 
 /**
  * 🔹 GOAL BONUS
  */
 function getGoalBonus(driverId) {
-  return getBySheet("goal_bonus", driverId);
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName("goal_bonus");
+  const values = sheet.getDataRange().getValues();
+  const headers = values[0];
+  const idIdx = headers.indexOf("conductor_id");
+
+  const rows = values.slice(1).filter(row =>
+    String(row[idIdx]).trim() === String(driverId).trim()
+  );
+
+  return ContentService.createTextOutput(
+    JSON.stringify({
+      goal_bonus: rows.map(r => {
+        const obj = {};
+        headers.forEach((h, i) => obj[h] = r[i]);
+        return obj;
+      })
+    })
+  ).setMimeType(ContentService.MimeType.JSON);
 }
 
 /**
  * 🔹 REPORTE SEMANAL
  */
 function getReporteSemanal(driverId) {
-  return getBySheet("reporte_semanal", driverId);
-}
-
-/**
- * 🔹 Generic sheet reader
- */
-function getBySheet(sheetName, driverId) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const sheet = ss.getSheetByName(sheetName);
+  const sheet = ss.getSheetByName("reporte_semanal");
   const values = sheet.getDataRange().getValues();
   const headers = values[0];
   const idIdx = headers.indexOf("conductor_id");
 
   const rows = values.slice(1).filter(row =>
-    String(row[idIdx]).trim() === driverId
+    String(row[idIdx]).trim() === String(driverId).trim()
   );
 
   return ContentService.createTextOutput(
-    JSON.stringify(rows.map(r => {
-      const obj = {};
-      headers.forEach((h, i) => obj[h] = r[i] ?? 0);
-      return obj;
-    }))
+    JSON.stringify({
+      reporte_semanal: rows.map(r => {
+        const obj = {};
+        headers.forEach((h, i) => obj[h] = r[i]);
+        return obj;
+      })
+    })
   ).setMimeType(ContentService.MimeType.JSON);
 }
