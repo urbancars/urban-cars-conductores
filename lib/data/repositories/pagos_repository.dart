@@ -6,8 +6,8 @@ class PagosRepository {
 
   PagosRepository(this.api);
 
-  Future<List<Pago>> fetchPagos(int driverId) async {
-    final list = await api.getPagos(driverId.toString());
+  Future<List<Pago>> fetchPagos(String driverId) async {
+    final list = await api.getPagos(driverId);
     return list.map((e) => Pago.fromJson(e)).toList();
   }
 }

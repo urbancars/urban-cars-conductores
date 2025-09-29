@@ -1,16 +1,23 @@
 class Balance {
   final String conductorId;
-  final double balance;
+  final double monto;
 
   Balance({
     required this.conductorId,
-    required this.balance,
+    required this.monto,
   });
 
   factory Balance.fromJson(Map<String, dynamic> json) {
     return Balance(
       conductorId: json['conductor_id'].toString(),
-      balance: double.tryParse(json['balance'].toString()) ?? 0.0,
+      monto: double.tryParse(json['balance'].toString()) ?? 0.0,
     );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'conductor_id': conductorId,
+      'balance': monto,
+    };
   }
 }

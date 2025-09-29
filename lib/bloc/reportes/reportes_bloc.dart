@@ -7,14 +7,18 @@ class ReportesBloc extends Bloc<ReportesEvent, ReportesState> {
   final ReportesRepository repository;
 
   ReportesBloc(this.repository) : super(ReportesInitial()) {
-    on<LoadReportes>((event, emit) async {
-      emit(ReportesLoading());
-      try {
-        final reportes = await repository.fetchReportes(event.driverId, days: event.days);
-        emit(ReportesLoaded(reportes));
-      } catch (e) {
-        emit(ReportesError(e.toString()));
-      }
-    });
+    on<FetchReportes>(_onFetchReportes);
+  }
+
+  Future<void> _onFetchReportes(
+      FetchReportes event, Emitter<ReportesState> emit) async {
+    emit(ReportesLoading());
+    try {
+      final reportes =
+          await repository.fetchReportes(event.driverId, days: event.days);
+      emit(ReportesLoaded(reportes));
+    } catch (e) {
+      emit(ReportesError(e.toString()));
+    }
   }
 }

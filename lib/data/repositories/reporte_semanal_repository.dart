@@ -6,8 +6,8 @@ class ReporteSemanalRepository {
 
   ReporteSemanalRepository(this.api);
 
-  Future<List<ReporteSemanal>> fetchReporteSemanal(int driverId) async {
-    final list = await api.getReporteSemanal(driverId.toString());
+  Future<List<ReporteSemanal>> fetchReporteSemanal(String driverId) async {
+    final list = await api.getReporteSemanal(driverId);
     return list.map((e) => ReporteSemanal.fromJson(e)).toList();
   }
 }

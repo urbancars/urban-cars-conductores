@@ -1,16 +1,19 @@
-import '../../data/services/api_service.dart';
-import '../../bloc/login/login_state.dart';
+import '../models/driver.dart';
+import '../services/api_service.dart';
 
 class LoginRepository {
   final ApiService api;
 
   LoginRepository(this.api);
 
-  Future<Driver> login(String documento) async {
+  /// Logs in a driver by documento
+  Future<Driver> login({required String documento}) async {
     final data = await api.getDriver(documento);
-    if (data.isEmpty || data['conductor_id'] == null) {
+
+    if (data.isEmpty) {
       throw Exception("Conductor no encontrado");
     }
+
     return Driver.fromJson(data);
   }
 }

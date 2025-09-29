@@ -16,4 +16,12 @@ class Pago {
       fecha: DateTime.tryParse(json['fecha'].toString()) ?? DateTime.now(),
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'conductor_id': conductorId,
+      'monto': monto,
+      'fecha': fecha.toIso8601String(),
+    };
+  }
 }

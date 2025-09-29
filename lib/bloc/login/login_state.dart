@@ -1,33 +1,24 @@
 import 'package:equatable/equatable.dart';
-
-class Driver {
-  final String id;
-  final String name;
-  final String documento;
-
-  Driver({required this.id, required this.name, required this.documento});
-
-  factory Driver.fromJson(Map<String, dynamic> json) {
-    return Driver(
-      id: json['conductor_id'].toString(),
-      name: json['conductor'] ?? '',
-      documento: json['documento'] ?? '',
-    );
-  }
-}
+import '../../data/models/driver.dart';
 
 abstract class LoginState extends Equatable {
+  const LoginState();
+
   @override
   List<Object?> get props => [];
 }
 
-class LoginInitial extends LoginState {}
+class LoginInitial extends LoginState {
+  const LoginInitial();
+}
 
-class LoginLoading extends LoginState {}
+class LoginLoading extends LoginState {
+  const LoginLoading();
+}
 
 class LoginSuccess extends LoginState {
   final Driver driver;
-  LoginSuccess(this.driver);
+  const LoginSuccess(this.driver);
 
   @override
   List<Object?> get props => [driver];
@@ -35,7 +26,7 @@ class LoginSuccess extends LoginState {
 
 class LoginFailure extends LoginState {
   final String message;
-  LoginFailure(this.message);
+  const LoginFailure(this.message);
 
   @override
   List<Object?> get props => [message];

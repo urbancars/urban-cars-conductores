@@ -1,6 +1,6 @@
 class ReporteSemanal {
   final String conductorId;
-  final int semanaId;
+  final String semanaId;
   final double efectivo;
   final double noEfectivo;
   final double gananciasDiarias;
@@ -32,7 +32,7 @@ class ReporteSemanal {
   factory ReporteSemanal.fromJson(Map<String, dynamic> json) {
     return ReporteSemanal(
       conductorId: json['conductor_id'].toString(),
-      semanaId: int.tryParse(json['semana_id'].toString()) ?? 0,
+      semanaId: json['semana_id'].toString(),
       efectivo: double.tryParse(json['efectivo'].toString()) ?? 0.0,
       noEfectivo: double.tryParse(json['no_efectivo'].toString()) ?? 0.0,
       gananciasDiarias: double.tryParse(json['ganancias_diarias'].toString()) ?? 0.0,
@@ -45,5 +45,23 @@ class ReporteSemanal {
       pagoCalculado: double.tryParse(json['pago_calculado'].toString()) ?? 0.0,
       pagoRealizado: double.tryParse(json['pago_realizado'].toString()) ?? 0.0,
     );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'conductor_id': conductorId,
+      'semana_id': semanaId,
+      'efectivo': efectivo,
+      'no_efectivo': noEfectivo,
+      'ganancias_diarias': gananciasDiarias,
+      'combustible': combustible,
+      'depositos_calculados': depositosCalculados,
+      'depositos_realizados': depositosRealizados,
+      'deuda': deuda,
+      'bono_semanal': bonoSemanal,
+      'ganancia_no_efectivo_a_pagar': gananciaNoEfectivoAPagar,
+      'pago_calculado': pagoCalculado,
+      'pago_realizado': pagoRealizado,
+    };
   }
 }

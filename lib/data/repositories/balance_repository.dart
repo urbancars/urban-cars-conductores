@@ -6,8 +6,8 @@ class BalanceRepository {
 
   BalanceRepository(this.api);
 
-  Future<List<Balance>> fetchBalance(int driverId) async {
-    final list = await api.getBalance(driverId.toString());
+  Future<List<Balance>> fetchBalance(String driverId) async {
+    final list = await api.getBalance(driverId);
     return list.map((e) => Balance.fromJson(e)).toList();
   }
 }

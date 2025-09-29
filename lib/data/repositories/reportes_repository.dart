@@ -6,8 +6,8 @@ class ReportesRepository {
 
   ReportesRepository(this.api);
 
-  Future<List<Reporte>> fetchReportes(int driverId, {int days = 14}) async {
-    final list = await api.getReportes(driverId.toString(), days: days);
+  Future<List<Reporte>> fetchReportes(String driverId, {int days = 14}) async {
+    final list = await api.getReportes(driverId, days: days);
     return list.map((e) => Reporte.fromJson(e)).toList();
   }
 }
