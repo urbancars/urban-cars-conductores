@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import '../../data/models/reporte.dart';
 
 abstract class ReportesState extends Equatable {
   const ReportesState();
@@ -12,7 +13,7 @@ class ReportesInitial extends ReportesState {}
 class ReportesLoading extends ReportesState {}
 
 class ReportesLoaded extends ReportesState {
-  final List<dynamic> reportes;
+  final List<Reporte> reportes;
 
   const ReportesLoaded(this.reportes);
 

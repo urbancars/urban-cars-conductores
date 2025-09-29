@@ -8,10 +8,10 @@ abstract class ReportesEvent extends Equatable {
 }
 
 class LoadReportes extends ReportesEvent {
-  final String driverId;
+  final int driverId;
   final int days;
 
-  const LoadReportes(this.driverId, this.days);
+  const LoadReportes({required this.driverId, this.days = 14});
 
   @override
   List<Object?> get props => [driverId, days];

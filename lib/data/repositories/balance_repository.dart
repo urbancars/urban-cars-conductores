@@ -1,3 +1,4 @@
+import '../models/balance.dart';
 import '../services/api_service.dart';
 
 class BalanceRepository {
@@ -5,7 +6,8 @@ class BalanceRepository {
 
   BalanceRepository(this.api);
 
-  Future<List<dynamic>> fetchBalance(String driverId) async {
-    return await api.fetchData('balance', driverId);
+  Future<List<Balance>> fetchBalance(int driverId) async {
+    final list = await api.getBalance(driverId.toString());
+    return list.map((e) => Balance.fromJson(e)).toList();
   }
 }

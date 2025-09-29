@@ -1,3 +1,4 @@
+import '../models/goal_bonus.dart';
 import '../services/api_service.dart';
 
 class GoalBonusRepository {
@@ -5,7 +6,8 @@ class GoalBonusRepository {
 
   GoalBonusRepository(this.api);
 
-  Future<List<dynamic>> fetchGoalBonus(String driverId) async {
-    return await api.fetchData('goal_bonus', driverId);
+  Future<List<GoalBonus>> fetchGoalBonus(int driverId) async {
+    final list = await api.getGoalBonus(driverId.toString());
+    return list.map((e) => GoalBonus.fromJson(e)).toList();
   }
 }

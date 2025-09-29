@@ -1,38 +1,17 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/repositories/balance_repository.dart';
-
-abstract class BalanceEvent {}
-
-class LoadBalance extends BalanceEvent {
-  final String driverId;
-  LoadBalance(this.driverId);
-}
-
-abstract class BalanceState {}
-
-class BalanceInitial extends BalanceState {}
-
-class BalanceLoading extends BalanceState {}
-
-class BalanceLoaded extends BalanceState {
-  final List<dynamic> balance;
-  BalanceLoaded(this.balance);
-}
-
-class BalanceError extends BalanceState {
-  final String message;
-  BalanceError(this.message);
-}
+import 'balance_event.dart';
+import 'balance_state.dart';
 
 class BalanceBloc extends Bloc<BalanceEvent, BalanceState> {
   final BalanceRepository repository;
 
   BalanceBloc(this.repository) : super(BalanceInitial()) {
-    on<LoadBalance>((event, emit) async {
+    on<FetchBalance>((event, emit) async {
       emit(BalanceLoading());
       try {
-        final data = await repository.fetchBalance(event.driverId);
-        emit(BalanceLoaded(data));
+        final balances = await repository.fetchBalance(event.driverId);
+        emit(BalanceLoaded(balances));
       } catch (e) {
         emit(BalanceError(e.toString()));
       }

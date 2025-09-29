@@ -1,3 +1,4 @@
+import '../models/pago.dart';
 import '../services/api_service.dart';
 
 class PagosRepository {
@@ -5,7 +6,8 @@ class PagosRepository {
 
   PagosRepository(this.api);
 
-  Future<List<dynamic>> fetchPagos(String driverId) async {
-    return await api.fetchData('pagos', driverId);
+  Future<List<Pago>> fetchPagos(int driverId) async {
+    final list = await api.getPagos(driverId.toString());
+    return list.map((e) => Pago.fromJson(e)).toList();
   }
 }

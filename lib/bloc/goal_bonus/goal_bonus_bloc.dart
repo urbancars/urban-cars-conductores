@@ -1,38 +1,17 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/repositories/goal_bonus_repository.dart';
-
-abstract class GoalBonusEvent {}
-
-class LoadGoalBonus extends GoalBonusEvent {
-  final String driverId;
-  LoadGoalBonus(this.driverId);
-}
-
-abstract class GoalBonusState {}
-
-class GoalBonusInitial extends GoalBonusState {}
-
-class GoalBonusLoading extends GoalBonusState {}
-
-class GoalBonusLoaded extends GoalBonusState {
-  final List<dynamic> bonuses;
-  GoalBonusLoaded(this.bonuses);
-}
-
-class GoalBonusError extends GoalBonusState {
-  final String message;
-  GoalBonusError(this.message);
-}
+import 'goal_bonus_event.dart';
+import 'goal_bonus_state.dart';
 
 class GoalBonusBloc extends Bloc<GoalBonusEvent, GoalBonusState> {
   final GoalBonusRepository repository;
 
   GoalBonusBloc(this.repository) : super(GoalBonusInitial()) {
-    on<LoadGoalBonus>((event, emit) async {
+    on<FetchGoalBonus>((event, emit) async {
       emit(GoalBonusLoading());
       try {
-        final data = await repository.fetchGoalBonus(event.driverId);
-        emit(GoalBonusLoaded(data));
+        final bonuses = await repository.fetchGoalBonus(event.driverId);
+        emit(GoalBonusLoaded(bonuses));
       } catch (e) {
         emit(GoalBonusError(e.toString()));
       }

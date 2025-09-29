@@ -1,22 +1,16 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import '../../config.dart';
+import '../../data/services/api_service.dart';
+import '../../bloc/login/login_state.dart';
 
 class LoginRepository {
-  Future<Map<String, dynamic>?> validateDriver(String documento) async {
-    final uri = Uri.parse("${AppConfig.apiUrl}?type=drivers&documento=$documento");
-    final res = await http.get(uri);
+  final ApiService api;
 
-    if (res.statusCode != 200) {
-      throw Exception("Error HTTP ${res.statusCode}");
+  LoginRepository(this.api);
+
+  Future<Driver> login(String documento) async {
+    final data = await api.getDriver(documento);
+    if (data.isEmpty || data['conductor_id'] == null) {
+      throw Exception("Conductor no encontrado");
     }
-
-    final data = json.decode(res.body);
-
-    // Expect something like { "conductor_id": 1, "conductor": "Juan Perez" }
-    if (data == null || data.isEmpty || data['conductor'] == null) {
-      return null;
-    }
-    return data;
+    return Driver.fromJson(data);
   }
 }

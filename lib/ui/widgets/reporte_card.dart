@@ -1,52 +1,60 @@
 import 'package:flutter/material.dart';
-import '../utils/formatters.dart';
+import 'package:reportes_app/data/models/reporte.dart';
+import 'package:reportes_app/ui/utils/formatters.dart';
 
 class ReporteCard extends StatelessWidget {
-  final Map<String, dynamic> reporte;
+  final Reporte reporte;
 
   const ReporteCard({super.key, required this.reporte});
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.all(8),
+      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Header: date
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(formatDate(reporte['fecha'])),
-                Text(reporte['placa'] ?? ""),
+                const Text("📅 "),
+                Text(
+                  formatDate(reporte.fecha),
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
               ],
             ),
             const SizedBox(height: 8),
-            _buildRow("🚖 Viajes", reporte['viajes'], bold: true),
-            const Divider(),
-            _buildRow("💵 Efectivo", formatCurrency(reporte['efectivo'])),
-            _buildRow("💳 No Efectivo", formatCurrency(reporte['ganancia no efectivo'])),
-            _buildRow("⛽ GNV", formatCurrency(reporte['gasto GNV'])),
-            _buildRow("⛽ Gasolina", formatCurrency(reporte['gasto gasolina'])),
-            _buildRow("🧾 Ganancia Conductor", formatCurrency(reporte['ganancia conductor'])),
-            _buildRow("🏦 Depositar", formatCurrency(reporte['total a depositar']), bold: true),
+
+            // Rows
+            _row("🧾 Monto", formatCurrency(reporte.monto)),
+            _row("🚕 Viajes", reporte.viajes.toString()),
+            _row("⛽ Combustible", formatCurrency(reporte.combustible)),
+            _row("🏦 Depósitos", formatCurrency(reporte.depositos)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildRow(String label, dynamic value, {bool bold = false}) {
+  Widget _row(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
+      padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: TextStyle(fontWeight: bold ? FontWeight.bold : FontWeight.normal)),
+          Flexible(
+            child: Text(
+              label,
+              style: const TextStyle(fontSize: 14),
+            ),
+          ),
+          const SizedBox(width: 12),
           Text(
-            value?.toString() ?? "0",
-            style: TextStyle(fontWeight: bold ? FontWeight.bold : FontWeight.normal),
+            value,
+            style: const TextStyle(fontWeight: FontWeight.w600),
           ),
         ],
       ),
