@@ -9,6 +9,7 @@ import '../../data/repositories/balance_repository.dart';
 import '../../data/services/api_service.dart';
 import '../../ui/utils/formatters.dart';
 import '../../config.dart';
+import '../../ui/widgets/app_drawer.dart';
 
 class BalancePage extends StatelessWidget {
   const BalancePage({super.key});
@@ -43,6 +44,7 @@ class BalancePage extends StatelessWidget {
           )..add(FetchBalance(driverId: driverId)),
           child: Scaffold(
             appBar: AppBar(title: const Text("Balance")),
+            drawer: AppDrawer(),
             body: BlocBuilder<BalanceBloc, BalanceState>(
               builder: (context, state) {
                 if (state is BalanceLoading) {

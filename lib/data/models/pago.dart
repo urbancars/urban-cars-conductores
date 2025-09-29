@@ -1,27 +1,28 @@
 class Pago {
-  final String conductorId;
+  final String conductor;
+  final int conductorId;
   final double monto;
   final DateTime fecha;
+  final int semanaId;
+  final DateTime endOfCorrespondingWeek;
 
   Pago({
+    required this.conductor,
     required this.conductorId,
     required this.monto,
     required this.fecha,
+    required this.semanaId,
+    required this.endOfCorrespondingWeek,
   });
 
   factory Pago.fromJson(Map<String, dynamic> json) {
     return Pago(
-      conductorId: json['conductor_id'].toString(),
-      monto: double.tryParse(json['monto'].toString()) ?? 0.0,
-      fecha: DateTime.tryParse(json['fecha'].toString()) ?? DateTime.now(),
+      conductor: json['conductor'],
+      conductorId: json['conductor_id'],
+      monto: (json['monto'] as num).toDouble(),
+      fecha: DateTime.parse(json['fecha']),
+      semanaId: json['semana_id'],
+      endOfCorrespondingWeek: DateTime.parse(json['end_of_corresponding_week']),
     );
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'conductor_id': conductorId,
-      'monto': monto,
-      'fecha': fecha.toIso8601String(),
-    };
   }
 }

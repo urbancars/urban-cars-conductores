@@ -9,6 +9,8 @@ import '../../data/repositories/reporte_semanal_repository.dart';
 import '../../data/services/api_service.dart';
 import '../../config.dart';
 import '../utils/formatters.dart';
+import '../widgets/app_drawer.dart';
+import 'reporte_semanal_detail_page.dart'; // ✅ import detail page
 
 class ReporteSemanalPage extends StatelessWidget {
   const ReporteSemanalPage({super.key});
@@ -43,33 +45,55 @@ class ReporteSemanalPage extends StatelessWidget {
           )..add(FetchReporteSemanal(driverId: driverId)),
           child: Scaffold(
             appBar: AppBar(title: const Text("📊 Reporte Semanal")),
+            drawer: const AppDrawer(),
             body: BlocBuilder<ReporteSemanalBloc, ReporteSemanalState>(
               builder: (context, state) {
                 if (state is ReporteSemanalLoading) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (state is ReporteSemanalLoaded) {
                   if (state.reportes.isEmpty) {
-                    return const Center(child: Text("No hay reportes semanales."));
+                    return const Center(
+                      child: Text("No hay reportes semanales."),
+                    );
                   }
                   return ListView.builder(
                     itemCount: state.reportes.length,
                     itemBuilder: (context, index) {
                       final r = state.reportes[index];
                       return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                        margin: const EdgeInsets.symmetric(
+                          vertical: 6,
+                          horizontal: 12,
+                        ),
                         child: ListTile(
                           leading: const Text("📅"),
                           title: Text("Semana ${r.semanaId}"),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("💵 Efectivo: ${formatCurrency(r.efectivo)}"),
-                              Text("💳 No efectivo: ${formatCurrency(r.noEfectivo)}"),
-                              Text("⛽ Combustible: ${formatCurrency(r.combustible)}"),
+                              Text(
+                                "💵 Efectivo: ${formatCurrency(r.efectivo)}",
+                              ),
+                              Text(
+                                "💳 No efectivo: ${formatCurrency(r.noEfectivo)}",
+                              ),
+                              Text(
+                                "⛽ Combustible: ${formatCurrency(r.combustible)}",
+                              ),
                               Text("⚠️ Deuda: ${formatCurrency(r.deuda)}"),
                               Text("🎯 Bono: ${formatCurrency(r.bonoSemanal)}"),
                             ],
                           ),
+                          onTap: () {
+                            // ✅ navigate to detail page
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    ReporteSemanalDetailPage(reporte: r),
+                              ),
+                            );
+                          },
                         ),
                       );
                     },

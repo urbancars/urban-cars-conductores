@@ -16,10 +16,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   ) async {
     emit(LoginLoading());
     try {
-      final driver = await loginRepository.login(documento: event.documento);
+      final driver = await loginRepository.login(event.documento);
       emit(LoginSuccess(driver));
     } catch (e) {
-      emit(LoginFailure(e.toString()));
+      final msg = e.toString().replaceFirst("Exception: ", "");
+      emit(LoginFailure(msg));
     }
   }
 }

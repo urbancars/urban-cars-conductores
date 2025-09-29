@@ -7,7 +7,6 @@ class ApiService {
 
   ApiService({required this.baseUrl});
 
-  /// 🔹 DRIVER LOOKUP BY DOCUMENTO
   Future<Map<String, dynamic>> getDriver(String documento) async {
     final response = await http.get(
       Uri.parse('$baseUrl?type=drivers&documento=$documento'),
@@ -16,17 +15,24 @@ class ApiService {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
 
-      if (data is Map && data.containsKey('conductor_id')) {
-        return Map<String, dynamic>.from(data);
+      if (data is Map && data.containsKey('driver')) {
+        if (data['driver'] == null) {
+          // ✅ handle not found properly
+          throw Exception("Documento no encontrado");
+        }
+        return Map<String, dynamic>.from(data['driver']);
       } else {
         throw Exception("Unexpected response shape for driver: $data");
       }
     } else {
-      throw Exception('Failed to load driver');
+      throw Exception('No se pudo conectar al servidor');
     }
   }
 
-  Future<List<Map<String, dynamic>>> getReportes(String driverId, {int days = 14}) async {
+  Future<List<Map<String, dynamic>>> getReportes(
+    String driverId, {
+    int days = 14,
+  }) async {
     final response = await http.get(
       Uri.parse('$baseUrl?type=reportes&driverId=$driverId&days=$days'),
     );
@@ -45,7 +51,9 @@ class ApiService {
   }
 
   Future<List<Map<String, dynamic>>> getPagos(String driverId) async {
-    final response = await http.get(Uri.parse('$baseUrl?type=pagos&driverId=$driverId'));
+    final response = await http.get(
+      Uri.parse('$baseUrl?type=pagos&driverId=$driverId'),
+    );
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -61,7 +69,9 @@ class ApiService {
   }
 
   Future<List<Map<String, dynamic>>> getBalance(String driverId) async {
-    final response = await http.get(Uri.parse('$baseUrl?type=balance&driverId=$driverId'));
+    final response = await http.get(
+      Uri.parse('$baseUrl?type=balance&driverId=$driverId'),
+    );
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -77,7 +87,9 @@ class ApiService {
   }
 
   Future<List<Map<String, dynamic>>> getGoalBonus(String driverId) async {
-    final response = await http.get(Uri.parse('$baseUrl?type=goal_bonus&driverId=$driverId'));
+    final response = await http.get(
+      Uri.parse('$baseUrl?type=goal_bonus&driverId=$driverId'),
+    );
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -93,7 +105,9 @@ class ApiService {
   }
 
   Future<List<Map<String, dynamic>>> getReporteSemanal(String driverId) async {
-    final response = await http.get(Uri.parse('$baseUrl?type=reporte_semanal&driverId=$driverId'));
+    final response = await http.get(
+      Uri.parse('$baseUrl?type=reporte_semanal&driverId=$driverId'),
+    );
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);

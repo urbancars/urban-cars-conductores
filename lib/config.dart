@@ -1,3 +1,4 @@
 class AppConfig {
-  static const String apiUrl = "https://script.google.com/macros/s/AKfycbwoqvSCmz7fJlMwWqulnVm3qm18uoHOuJmQMvQX8Cv2QQz61VJMtnwEEFno9fY_KIOZqA/exec";
+  static const String apiUrl =
+      "https://script.google.com/macros/s/AKfycby0CtRtW0xNvJrGb5mDyrv9hSYE4_KlqH57NdnIqMYgCKiLKw4_xJXUy70VVDPqiUcR2g/exec";
 }

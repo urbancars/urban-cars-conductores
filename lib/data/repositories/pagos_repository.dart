@@ -7,7 +7,18 @@ class PagosRepository {
   PagosRepository(this.api);
 
   Future<List<Pago>> fetchPagos(String driverId) async {
-    final list = await api.getPagos(driverId);
-    return list.map((e) => Pago.fromJson(e)).toList();
+    try {
+      final list = await api.getPagos(driverId);
+
+      return list.map((e) {
+        try {
+          return Pago.fromJson(e);
+        } catch (err) {
+          throw Exception("Error al parsear un pago: $e");
+        }
+      }).toList();
+    } catch (e) {
+      throw Exception("No se pudieron cargar los pagos: $e");
+    }
   }
 }

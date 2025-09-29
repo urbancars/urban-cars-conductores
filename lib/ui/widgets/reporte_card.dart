@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:reportes_app/data/models/reporte.dart';
-import 'package:reportes_app/ui/utils/formatters.dart';
+import '../utils/formatters.dart';
+import '../../data/models/reporte.dart'; // adjust import to your model
 
 class ReporteCard extends StatelessWidget {
   final Reporte reporte;
@@ -10,52 +10,52 @@ class ReporteCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header: date
+            // Top row: date + plate
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text("📅 "),
                 Text(
-                  formatDate(reporte.fecha),
-                  style: const TextStyle(fontWeight: FontWeight.w600),
+                  formatDateWithWeekday(reporte.fecha),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  reporte.placa ?? "",
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ],
             ),
             const SizedBox(height: 8),
-
-            // Rows
-            _row("🧾 Monto", formatCurrency(reporte.monto)),
-            _row("🚕 Viajes", reporte.viajes.toString()),
-            _row("⛽ Combustible", formatCurrency(reporte.combustible)),
-            _row("🏦 Depósitos", formatCurrency(reporte.depositos)),
+            // Values list
+            _buildRow("🚗 Viajes", formatNumber(reporte.viajes)),
+            _buildRow("💵 Efectivo", formatCurrency(reporte.efectivo)),
+            _buildRow("⛽ GNV", formatCurrency(reporte.gnv)),
+            _buildRow("⛽ Gasolina", formatCurrency(reporte.gasolina)),
+            _buildRow(
+              "🧑‍🦱 Ganancia Conductor",
+              formatCurrency(reporte.gananciaConductor),
+            ),
+            _buildRow("🏦 Depositar", formatCurrency(reporte.totalADepositar)),
+            _buildRow("✅ Depositado", formatCurrency(reporte.depositado)),
           ],
         ),
       ),
     );
   }
 
-  Widget _row(String label, String value) {
+  Widget _buildRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3),
+      padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Flexible(
-            child: Text(
-              label,
-              style: const TextStyle(fontSize: 14),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Text(
-            value,
-            style: const TextStyle(fontWeight: FontWeight.w600),
-          ),
+          Text(label),
+          Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
         ],
       ),
     );

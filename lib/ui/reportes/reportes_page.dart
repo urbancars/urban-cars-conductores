@@ -8,6 +8,7 @@ import '../../bloc/reportes/reportes_state.dart';
 import '../../data/repositories/reportes_repository.dart';
 import '../../data/services/api_service.dart';
 import '../../ui/widgets/reporte_card.dart';
+import '../../ui/widgets/app_drawer.dart';
 import '../../config.dart';
 
 class ReportesPage extends StatelessWidget {
@@ -44,6 +45,7 @@ class ReportesPage extends StatelessWidget {
           )..add(FetchReportes(driverId: driverId)),
           child: Scaffold(
             appBar: AppBar(title: const Text("Reportes")),
+            drawer: AppDrawer(),
             body: BlocBuilder<ReportesBloc, ReportesState>(
               builder: (context, state) {
                 if (state is ReportesLoading) {
@@ -55,8 +57,8 @@ class ReportesPage extends StatelessWidget {
                   return ListView.builder(
                     itemCount: state.reportes.length,
                     itemBuilder: (context, index) {
-                      final reporte = state.reportes[index];
-                      return ReporteCard(reporte: reporte);
+                      final r = state.reportes[index];
+                      return ReporteCard(reporte: r);
                     },
                   );
                 } else if (state is ReportesError) {

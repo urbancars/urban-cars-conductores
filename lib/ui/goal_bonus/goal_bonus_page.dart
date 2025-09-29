@@ -44,7 +44,7 @@ class GoalBonusPage extends StatelessWidget {
           )..add(FetchGoalBonus(driverId: driverId)),
           child: Scaffold(
             appBar: AppBar(title: const Text("🎯 Goal Bonus")),
-            drawer: const AppDrawer(),
+            drawer: AppDrawer(),
             body: BlocBuilder<GoalBonusBloc, GoalBonusState>(
               builder: (context, state) {
                 if (state is GoalBonusLoading) {
@@ -59,7 +59,9 @@ class GoalBonusPage extends StatelessWidget {
                       final bonus = state.bonuses[index];
                       return Card(
                         margin: const EdgeInsets.symmetric(
-                            vertical: 6, horizontal: 12),
+                          vertical: 6,
+                          horizontal: 12,
+                        ),
                         child: ListTile(
                           leading: const Text("🎯"),
                           title: Text("Semana: ${bonus.semana}"),

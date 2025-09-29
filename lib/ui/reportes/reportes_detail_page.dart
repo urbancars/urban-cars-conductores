@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../data/models/reporte.dart';
-import '../../utils/formatters.dart';
+import '../../ui/utils/formatters.dart';
 
 class ReportesDetailPage extends StatelessWidget {
   final Reporte reporte;
@@ -16,10 +16,10 @@ class ReportesDetailPage extends StatelessWidget {
         children: [
           _buildRow("👤 Conductor", reporte.conductorId.toString()),
           _buildRow("📅 Fecha", formatDate(reporte.fecha)),
-          _buildRow("💵 Monto", formatCurrency(reporte.monto)),
+          _buildRow("💵 Efectivo", formatCurrency(reporte.efectivo)),
           _buildRow("📈 Viajes", reporte.viajes.toString()),
-          _buildRow("⛽ Combustible", formatCurrency(reporte.combustible)),
-          _buildRow("🏦 Depósitos", formatCurrency(reporte.depositos)),
+          _buildRow("⛽ Combustible", formatCurrency(reporte.gnv)),
+          _buildRow("🏦 Depósitos", formatCurrency(reporte.depositado)),
         ],
       ),
     );
