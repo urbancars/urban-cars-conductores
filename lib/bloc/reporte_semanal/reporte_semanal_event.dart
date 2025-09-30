@@ -9,9 +9,13 @@ abstract class ReporteSemanalEvent extends Equatable {
 
 class FetchReporteSemanal extends ReporteSemanalEvent {
   final String driverId;
+  final bool forceRefresh;
 
-  const FetchReporteSemanal({required this.driverId});
+  const FetchReporteSemanal({
+    required this.driverId,
+    this.forceRefresh = false, // ✅ default = false
+  });
 
   @override
-  List<Object?> get props => [driverId];
+  List<Object?> get props => [driverId, forceRefresh];
 }

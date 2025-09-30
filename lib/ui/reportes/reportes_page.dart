@@ -5,11 +5,10 @@ import '../../bloc/reportes/reportes_bloc.dart';
 import '../../bloc/reportes/reportes_event.dart';
 import '../../bloc/reportes/reportes_state.dart';
 import '../../data/repositories/reportes_repository.dart';
-import '../../data/services/api_service.dart';
 import '../../ui/widgets/reporte_card.dart';
 import '../../ui/widgets/app_drawer.dart';
 import '../../ui/widgets/refreshable_bloc_page.dart';
-import '../../ui/widgets/driver_guard.dart'; // ✅ added
+import '../../ui/widgets/driver_guard.dart'; // ✅
 import '../../config.dart';
 
 class ReportesPage extends StatelessWidget {
@@ -21,7 +20,7 @@ class ReportesPage extends StatelessWidget {
       builder: (context, driverId) {
         return BlocProvider(
           create: (_) => ReportesBloc(
-            ReportesRepository(ApiService(baseUrl: AppConfig.apiUrl)),
+            context.read<ReportesRepository>(), // ✅ shared cached repo
           )..add(FetchReportes(driverId: driverId)),
           child: Scaffold(
             appBar: AppBar(title: const Text("Reportes diarios")),
@@ -30,8 +29,9 @@ class ReportesPage extends StatelessWidget {
               builder: (context, state) {
                 return RefreshableBlocPage(
                   onRefresh: (ctx) async {
+                    // ✅ Force refresh bypasses cache
                     ctx.read<ReportesBloc>().add(
-                      FetchReportes(driverId: driverId),
+                      FetchReportes(driverId: driverId, forceRefresh: true),
                     );
                   },
                   builder: (ctx) {

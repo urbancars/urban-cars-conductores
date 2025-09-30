@@ -11,11 +11,15 @@ class ReportesBloc extends Bloc<ReportesEvent, ReportesState> {
   }
 
   Future<void> _onFetchReportes(
-      FetchReportes event, Emitter<ReportesState> emit) async {
+    FetchReportes event,
+    Emitter<ReportesState> emit,
+  ) async {
     emit(ReportesLoading());
     try {
-      final reportes =
-          await repository.fetchReportes(event.driverId, days: event.days);
+      final reportes = await repository.fetchReportes(
+        event.driverId,
+        forceRefresh: event.forceRefresh,
+      );
       emit(ReportesLoaded(reportes));
     } catch (e) {
       emit(ReportesError(e.toString()));

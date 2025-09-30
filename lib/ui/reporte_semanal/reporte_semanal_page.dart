@@ -5,12 +5,11 @@ import '../../bloc/reporte_semanal/reporte_semanal_bloc.dart';
 import '../../bloc/reporte_semanal/reporte_semanal_event.dart';
 import '../../bloc/reporte_semanal/reporte_semanal_state.dart';
 import '../../data/repositories/reporte_semanal_repository.dart';
-import '../../data/services/api_service.dart';
 import '../../config.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/refreshable_bloc_page.dart';
 import '../widgets/reporte_semanal_card.dart';
-import '../widgets/driver_guard.dart'; // ✅ added
+import '../widgets/driver_guard.dart'; // ✅
 
 class ReporteSemanalPage extends StatelessWidget {
   const ReporteSemanalPage({super.key});
@@ -21,7 +20,7 @@ class ReporteSemanalPage extends StatelessWidget {
       builder: (context, driverId) {
         return BlocProvider(
           create: (_) => ReporteSemanalBloc(
-            ReporteSemanalRepository(ApiService(baseUrl: AppConfig.apiUrl)),
+            context.read<ReporteSemanalRepository>(), // ✅ shared cached repo
           )..add(FetchReporteSemanal(driverId: driverId)),
           child: Scaffold(
             appBar: AppBar(title: const Text("📊 Reporte Semanal")),
@@ -31,7 +30,10 @@ class ReporteSemanalPage extends StatelessWidget {
                 return RefreshableBlocPage(
                   onRefresh: (ctx) async {
                     ctx.read<ReporteSemanalBloc>().add(
-                      FetchReporteSemanal(driverId: driverId),
+                      FetchReporteSemanal(
+                        driverId: driverId,
+                        forceRefresh: true, // ✅ bypass cache
+                      ),
                     );
                   },
                   builder: (ctx) {

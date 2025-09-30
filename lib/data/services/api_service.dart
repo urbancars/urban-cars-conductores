@@ -31,7 +31,7 @@ class ApiService {
 
   Future<List<Map<String, dynamic>>> getReportes(
     String driverId, {
-    int days = 14,
+    int days = 7,
   }) async {
     final response = await http.get(
       Uri.parse('$baseUrl?type=reportes&driverId=$driverId&days=$days'),

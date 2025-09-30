@@ -5,9 +5,7 @@ import '../../bloc/balance/balance_bloc.dart';
 import '../../bloc/balance/balance_event.dart';
 import '../../bloc/balance/balance_state.dart';
 import '../../data/repositories/balance_repository.dart';
-import '../../data/services/api_service.dart';
 import '../../ui/utils/formatters.dart';
-import '../../config.dart';
 import '../../ui/widgets/app_drawer.dart';
 import '../../ui/widgets/refreshable_bloc_page.dart';
 import '../../ui/widgets/driver_guard.dart'; // ✅ DriverGuard
@@ -21,7 +19,7 @@ class BalancePage extends StatelessWidget {
       builder: (context, driverId) {
         return BlocProvider(
           create: (_) => BalanceBloc(
-            BalanceRepository(ApiService(baseUrl: AppConfig.apiUrl)),
+            context.read<BalanceRepository>(), // ✅ use shared repo
           )..add(FetchBalance(driverId: driverId)),
           child: Scaffold(
             appBar: AppBar(title: const Text("Balance")),
@@ -30,8 +28,9 @@ class BalancePage extends StatelessWidget {
               builder: (context, state) {
                 return RefreshableBlocPage(
                   onRefresh: (ctx) async {
+                    // ✅ Force refresh bypasses cache
                     ctx.read<BalanceBloc>().add(
-                      FetchBalance(driverId: driverId),
+                      FetchBalance(driverId: driverId, forceRefresh: true),
                     );
                   },
                   builder: (ctx) {

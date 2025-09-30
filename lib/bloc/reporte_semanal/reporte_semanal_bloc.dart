@@ -3,7 +3,8 @@ import 'reporte_semanal_event.dart';
 import 'reporte_semanal_state.dart';
 import '../../data/repositories/reporte_semanal_repository.dart';
 
-class ReporteSemanalBloc extends Bloc<ReporteSemanalEvent, ReporteSemanalState> {
+class ReporteSemanalBloc
+    extends Bloc<ReporteSemanalEvent, ReporteSemanalState> {
   final ReporteSemanalRepository repository;
 
   ReporteSemanalBloc(this.repository) : super(ReporteSemanalInitial()) {
@@ -16,7 +17,10 @@ class ReporteSemanalBloc extends Bloc<ReporteSemanalEvent, ReporteSemanalState> 
   ) async {
     emit(ReporteSemanalLoading());
     try {
-      final reportes = await repository.fetchReporteSemanal(event.driverId);
+      final reportes = await repository.fetchReporteSemanal(
+        event.driverId,
+        forceRefresh: event.forceRefresh, // ✅ allow bypassing cache
+      );
       emit(ReporteSemanalLoaded(reportes));
     } catch (e) {
       emit(ReporteSemanalError(e.toString()));

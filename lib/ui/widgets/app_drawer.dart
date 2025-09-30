@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../bloc/login/login_bloc.dart';
+import '../../bloc/login/login_event.dart';
 
 class AppDrawer extends StatefulWidget {
   const AppDrawer({super.key});
@@ -20,9 +24,7 @@ class _AppDrawerState extends State<AppDrawer> {
   Future<void> _loadDriverName() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _driverName = prefs.getString(
-        'driverName',
-      ); // ⚠️ make sure you save this at login
+      _driverName = prefs.getString('driverName');
     });
   }
 
@@ -30,6 +32,15 @@ class _AppDrawerState extends State<AppDrawer> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
 
+    // 🔹 Clear local state so header updates immediately
+    setState(() {
+      _driverName = null;
+    });
+
+    // 🔹 Dispatch logout event (clears cached repositories)
+    context.read<LoginBloc>().add(Logout());
+
+    // 🔹 Navigate back to login
     Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
   }
 
@@ -43,7 +54,7 @@ class _AppDrawerState extends State<AppDrawer> {
             child: Align(
               alignment: Alignment.bottomLeft,
               child: Text(
-                _driverName != null ? "$_driverName" : "Conductor",
+                _driverName != null ? _driverName! : "Conductor",
                 style: const TextStyle(color: Colors.white, fontSize: 18),
               ),
             ),

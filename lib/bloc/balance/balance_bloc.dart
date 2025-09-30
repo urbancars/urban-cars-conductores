@@ -16,7 +16,10 @@ class BalanceBloc extends Bloc<BalanceEvent, BalanceState> {
   ) async {
     emit(BalanceLoading());
     try {
-      final balance = await repository.fetchBalance(event.driverId);
+      final balance = await repository.fetchBalance(
+        event.driverId,
+        forceRefresh: event.forceRefresh, // ✅ now supported
+      );
       emit(BalanceLoaded(balance));
     } catch (e) {
       emit(BalanceError(e.toString()));

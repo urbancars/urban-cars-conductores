@@ -9,10 +9,10 @@ abstract class ReportesEvent extends Equatable {
 
 class FetchReportes extends ReportesEvent {
   final String driverId;
-  final int days;
+  final bool forceRefresh;
 
-  const FetchReportes({required this.driverId, this.days = 14});
+  const FetchReportes({required this.driverId, this.forceRefresh = false});
 
   @override
-  List<Object?> get props => [driverId, days];
+  List<Object?> get props => [driverId, forceRefresh];
 }

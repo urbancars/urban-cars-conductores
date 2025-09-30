@@ -10,13 +10,13 @@ class PagosBloc extends Bloc<PagosEvent, PagosState> {
     on<FetchPagos>(_onFetchPagos);
   }
 
-  Future<void> _onFetchPagos(
-    FetchPagos event,
-    Emitter<PagosState> emit,
-  ) async {
+  Future<void> _onFetchPagos(FetchPagos event, Emitter<PagosState> emit) async {
     emit(PagosLoading());
     try {
-      final pagos = await repository.fetchPagos(event.driverId);
+      final pagos = await repository.fetchPagos(
+        event.driverId,
+        forceRefresh: event.forceRefresh, // ✅ new parameter
+      );
       emit(PagosLoaded(pagos));
     } catch (e) {
       emit(PagosError(e.toString()));

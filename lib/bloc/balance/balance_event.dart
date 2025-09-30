@@ -9,9 +9,10 @@ abstract class BalanceEvent extends Equatable {
 
 class FetchBalance extends BalanceEvent {
   final String driverId;
+  final bool forceRefresh;
 
-  const FetchBalance({required this.driverId});
+  const FetchBalance({required this.driverId, this.forceRefresh = false});
 
   @override
-  List<Object?> get props => [driverId];
+  List<Object?> get props => [driverId, forceRefresh];
 }

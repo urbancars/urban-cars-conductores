@@ -5,7 +5,6 @@ import '../../bloc/goal_bonus/goal_bonus_bloc.dart';
 import '../../bloc/goal_bonus/goal_bonus_event.dart';
 import '../../bloc/goal_bonus/goal_bonus_state.dart';
 import '../../data/repositories/goal_bonus_repository.dart';
-import '../../data/services/api_service.dart';
 import '../../config.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/refreshable_bloc_page.dart';
@@ -21,7 +20,7 @@ class GoalBonusPage extends StatelessWidget {
       builder: (context, driverId) {
         return BlocProvider(
           create: (_) => GoalBonusBloc(
-            GoalBonusRepository(ApiService(baseUrl: AppConfig.apiUrl)),
+            context.read<GoalBonusRepository>(), // ✅ shared cached repo
           )..add(FetchGoalBonus(driverId: driverId)),
           child: Scaffold(
             appBar: AppBar(title: const Text("🎯 Goal Bonus")),
@@ -30,8 +29,9 @@ class GoalBonusPage extends StatelessWidget {
               builder: (context, state) {
                 return RefreshableBlocPage(
                   onRefresh: (ctx) async {
+                    // ✅ Force refresh bypasses cache
                     ctx.read<GoalBonusBloc>().add(
-                      FetchGoalBonus(driverId: driverId),
+                      FetchGoalBonus(driverId: driverId, forceRefresh: true),
                     );
                   },
                   builder: (ctx) {

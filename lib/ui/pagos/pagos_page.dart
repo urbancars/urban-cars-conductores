@@ -5,12 +5,10 @@ import '../../bloc/pagos/pagos_bloc.dart';
 import '../../bloc/pagos/pagos_event.dart';
 import '../../bloc/pagos/pagos_state.dart';
 import '../../data/repositories/pagos_repository.dart';
-import '../../data/services/api_service.dart';
 import '../../ui/widgets/pago_card.dart';
 import '../../ui/widgets/app_drawer.dart';
 import '../../ui/widgets/refreshable_bloc_page.dart';
-import '../../ui/widgets/driver_guard.dart'; // ✅ DriverGuard
-import '../../config.dart';
+import '../../ui/widgets/driver_guard.dart';
 
 class PagosPage extends StatelessWidget {
   const PagosPage({super.key});
@@ -21,7 +19,7 @@ class PagosPage extends StatelessWidget {
       builder: (context, driverId) {
         return BlocProvider(
           create: (_) =>
-              PagosBloc(PagosRepository(ApiService(baseUrl: AppConfig.apiUrl)))
+              PagosBloc(context.read<PagosRepository>()) // ✅ use global repo
                 ..add(FetchPagos(driverId: driverId)),
           child: Scaffold(
             appBar: AppBar(title: const Text("Pagos")),
@@ -30,7 +28,10 @@ class PagosPage extends StatelessWidget {
               builder: (context, state) {
                 return RefreshableBlocPage(
                   onRefresh: (ctx) async {
-                    ctx.read<PagosBloc>().add(FetchPagos(driverId: driverId));
+                    // ✅ Pull-to-refresh bypasses cache
+                    ctx.read<PagosBloc>().add(
+                      FetchPagos(driverId: driverId, forceRefresh: true),
+                    );
                   },
                   builder: (ctx) {
                     if (state is PagosLoading) {
