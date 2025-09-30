@@ -8,7 +8,7 @@ function doGet(e) {
 
     if (type === "reportes") {
         const driverId = e.parameter.driverId;
-        const days = e.parameter.days ? parseInt(e.parameter.days) : 14;
+        const days = e.parameter.days ? parseInt(e.parameter.days) : 7;
         return getReportes(driverId, days);
     }
 
@@ -90,6 +90,9 @@ function getReportes(driverId, days) {
         const fecha = new Date(row[dateIdx]);
         return rowId === String(driverId).trim() && fecha >= cutoff;
     });
+
+    // 🔹 Sort rows by date descending (newest first)
+    rows.sort((a, b) => new Date(b[dateIdx]) - new Date(a[dateIdx]));
 
     return ContentService.createTextOutput(
         JSON.stringify({

@@ -7,10 +7,10 @@ import '../../bloc/goal_bonus/goal_bonus_state.dart';
 import '../../data/repositories/goal_bonus_repository.dart';
 import '../../data/services/api_service.dart';
 import '../../config.dart';
-import '../utils/formatters.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/refreshable_bloc_page.dart';
-import '../widgets/driver_guard.dart'; // ✅ added
+import '../widgets/driver_guard.dart'; // ✅
+import '../widgets/goal_bonus_card.dart'; // ✅ new widget
 
 class GoalBonusPage extends StatelessWidget {
   const GoalBonusPage({super.key});
@@ -45,24 +45,7 @@ class GoalBonusPage extends StatelessWidget {
                         itemCount: state.bonuses.length,
                         itemBuilder: (context, index) {
                           final bonus = state.bonuses[index];
-                          return Card(
-                            margin: const EdgeInsets.symmetric(
-                              vertical: 6,
-                              horizontal: 12,
-                            ),
-                            child: ListTile(
-                              leading: const Text("🎯"),
-                              title: Text("Semana: ${bonus.semana}"),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Conductor: ${bonus.conductorId}"),
-                                  Text("Monto: ${formatCurrency(bonus.monto)}"),
-                                  Text("Porcentaje: ${bonus.porcentaje}%"),
-                                ],
-                              ),
-                            ),
-                          );
+                          return GoalBonusCard(bonus: bonus); // ✅ use widget
                         },
                       );
                     } else if (state is GoalBonusError) {

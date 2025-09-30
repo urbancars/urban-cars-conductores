@@ -12,27 +12,62 @@ class ReporteSemanalCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-      child: ListTile(
-        leading: const Text("📅"),
-        title: Text("Semana ${reporte.semanaId}"),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("💵 Efectivo: ${formatCurrency(reporte.efectivo)}"),
-            Text("💳 No efectivo: ${formatCurrency(reporte.noEfectivo)}"),
-            Text("⛽ Combustible: ${formatCurrency(reporte.combustible)}"),
-            Text("⚠️ Deuda: ${formatCurrency(reporte.deuda)}"),
-            Text("🎯 Bono: ${formatCurrency(reporte.bonoSemanal)}"),
-          ],
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ReporteSemanalDetailPage(reporte: reporte),
+              ),
+            );
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// 1. Week text
+              Text(
+                reporte.weekText,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              const SizedBox(height: 8),
+
+              /// 2. Ganancia conductor sin bono
+              Text(
+                "💵 Ganancia sin bono: ${formatCurrency(reporte.gananciaConductorTotalSinBono)}",
+              ),
+
+              /// 3. Bono semanal bruto + porcentaje
+              Text(
+                "🎯 Bono semanal: ${formatCurrency(reporte.bonoSemanalBruto)} "
+                "(${(reporte.bonoSemanalPercentageFact * 100).toStringAsFixed(0)}%)",
+              ),
+
+              /// 4. Ganancia conductor total con bono
+              Text(
+                "✅ Total con bono: ${formatCurrency(reporte.gananciaConductorTotalConBono)}",
+              ),
+
+              /// 5. Deuda
+              Text("⚠️ Deuda: ${formatCurrency(reporte.debt)}"),
+
+              /// 6. Pago calculado
+              Text(
+                "💳 Pago calculado: ${formatCurrency(reporte.pagoCalculado)}",
+              ),
+
+              /// 7. Pago realizado
+              Text(
+                "📥 Pago realizado: ${formatCurrency(reporte.pagoRealizado)}",
+              ),
+            ],
+          ),
         ),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => ReporteSemanalDetailPage(reporte: reporte),
-            ),
-          );
-        },
       ),
     );
   }
