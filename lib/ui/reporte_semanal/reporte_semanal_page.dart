@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../bloc/reporte_semanal/reporte_semanal_bloc.dart';
 import '../../bloc/reporte_semanal/reporte_semanal_event.dart';
@@ -10,35 +9,16 @@ import '../../data/services/api_service.dart';
 import '../../config.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/refreshable_bloc_page.dart';
-import '../widgets/reporte_semanal_card.dart'; // ✅ new card widget
+import '../widgets/reporte_semanal_card.dart';
+import '../widgets/driver_guard.dart'; // ✅ added
 
 class ReporteSemanalPage extends StatelessWidget {
   const ReporteSemanalPage({super.key});
 
-  Future<String?> _getDriverId() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('driverId');
-  }
-
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<String?>(
-      future: _getDriverId(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
-
-        if (!snapshot.hasData || snapshot.data == null) {
-          return const Scaffold(
-            body: Center(child: Text("⚠️ No driver ID found")),
-          );
-        }
-
-        final driverId = snapshot.data!;
-
+    return DriverGuard(
+      builder: (context, driverId) {
         return BlocProvider(
           create: (_) => ReporteSemanalBloc(
             ReporteSemanalRepository(ApiService(baseUrl: AppConfig.apiUrl)),
@@ -67,9 +47,7 @@ class ReporteSemanalPage extends StatelessWidget {
                         itemCount: state.reportes.length,
                         itemBuilder: (context, index) {
                           final r = state.reportes[index];
-                          return ReporteSemanalCard(
-                            reporte: r,
-                          ); // ✅ use card widget
+                          return ReporteSemanalCard(reporte: r);
                         },
                       );
                     } else if (state is ReporteSemanalError) {

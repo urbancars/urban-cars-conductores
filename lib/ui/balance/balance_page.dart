@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../bloc/balance/balance_bloc.dart';
 import '../../bloc/balance/balance_event.dart';
@@ -10,42 +9,23 @@ import '../../data/services/api_service.dart';
 import '../../ui/utils/formatters.dart';
 import '../../config.dart';
 import '../../ui/widgets/app_drawer.dart';
-import '../../ui/widgets/refreshable_bloc_page.dart'; // ✅ added
+import '../../ui/widgets/refreshable_bloc_page.dart';
+import '../../ui/widgets/driver_guard.dart'; // ✅ DriverGuard
 
 class BalancePage extends StatelessWidget {
   const BalancePage({super.key});
 
-  Future<String?> _getDriverId() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('driverId');
-  }
-
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<String?>(
-      future: _getDriverId(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
-
-        if (!snapshot.hasData || snapshot.data == null) {
-          return const Scaffold(
-            body: Center(child: Text("⚠️ No driver ID found")),
-          );
-        }
-
-        final driverId = snapshot.data!;
-
+    return DriverGuard(
+      builder: (context, driverId) {
         return BlocProvider(
           create: (_) => BalanceBloc(
             BalanceRepository(ApiService(baseUrl: AppConfig.apiUrl)),
           )..add(FetchBalance(driverId: driverId)),
           child: Scaffold(
             appBar: AppBar(title: const Text("Balance")),
-            drawer: AppDrawer(),
+            drawer: const AppDrawer(),
             body: BlocBuilder<BalanceBloc, BalanceState>(
               builder: (context, state) {
                 return RefreshableBlocPage(
@@ -75,7 +55,6 @@ class BalancePage extends StatelessWidget {
                             child: ListTile(
                               leading: const Text("📊"),
                               title: Text("Monto: ${formatCurrency(b.monto)}"),
-                              subtitle: Text("Conductor: ${b.conductorId}"),
                             ),
                           );
                         },

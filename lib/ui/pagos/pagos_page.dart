@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../bloc/pagos/pagos_bloc.dart';
 import '../../bloc/pagos/pagos_event.dart';
@@ -9,36 +8,17 @@ import '../../data/repositories/pagos_repository.dart';
 import '../../data/services/api_service.dart';
 import '../../ui/widgets/pago_card.dart';
 import '../../ui/widgets/app_drawer.dart';
-import '../../ui/widgets/refreshable_bloc_page.dart'; // ✅ new widget
+import '../../ui/widgets/refreshable_bloc_page.dart';
+import '../../ui/widgets/driver_guard.dart'; // ✅ DriverGuard
 import '../../config.dart';
 
 class PagosPage extends StatelessWidget {
   const PagosPage({super.key});
 
-  Future<String?> _getDriverId() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('driverId');
-  }
-
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<String?>(
-      future: _getDriverId(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
-
-        if (!snapshot.hasData || snapshot.data == null) {
-          return const Scaffold(
-            body: Center(child: Text("⚠️ No driver ID found")),
-          );
-        }
-
-        final driverId = snapshot.data!;
-
+    return DriverGuard(
+      builder: (context, driverId) {
         return BlocProvider(
           create: (_) =>
               PagosBloc(PagosRepository(ApiService(baseUrl: AppConfig.apiUrl)))

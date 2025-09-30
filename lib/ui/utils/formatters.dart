@@ -32,7 +32,7 @@ String formatPercentage(dynamic value) {
   }
 }
 
-/// Format date as dd/MM/yyyy
+/// Format date as dd/MM/yyyy (with fallback to string if parsing fails)
 String formatDate(dynamic value) {
   if (value == null || value.toString().isEmpty) return "";
   try {

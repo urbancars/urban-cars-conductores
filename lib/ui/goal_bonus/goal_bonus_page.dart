@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../bloc/goal_bonus/goal_bonus_bloc.dart';
 import '../../bloc/goal_bonus/goal_bonus_event.dart';
@@ -10,42 +9,23 @@ import '../../data/services/api_service.dart';
 import '../../config.dart';
 import '../utils/formatters.dart';
 import '../widgets/app_drawer.dart';
-import '../widgets/refreshable_bloc_page.dart'; // ✅ added
+import '../widgets/refreshable_bloc_page.dart';
+import '../widgets/driver_guard.dart'; // ✅ added
 
 class GoalBonusPage extends StatelessWidget {
   const GoalBonusPage({super.key});
 
-  Future<String?> _getDriverId() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('driverId');
-  }
-
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<String?>(
-      future: _getDriverId(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
-
-        if (!snapshot.hasData || snapshot.data == null) {
-          return const Scaffold(
-            body: Center(child: Text("⚠️ No driver ID found")),
-          );
-        }
-
-        final driverId = snapshot.data!;
-
+    return DriverGuard(
+      builder: (context, driverId) {
         return BlocProvider(
           create: (_) => GoalBonusBloc(
             GoalBonusRepository(ApiService(baseUrl: AppConfig.apiUrl)),
           )..add(FetchGoalBonus(driverId: driverId)),
           child: Scaffold(
             appBar: AppBar(title: const Text("🎯 Goal Bonus")),
-            drawer: AppDrawer(),
+            drawer: const AppDrawer(),
             body: BlocBuilder<GoalBonusBloc, GoalBonusState>(
               builder: (context, state) {
                 return RefreshableBlocPage(

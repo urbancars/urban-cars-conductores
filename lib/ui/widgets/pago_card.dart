@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../ui/utils/formatters.dart';
 import '../../data/models/pago.dart';
 
@@ -13,15 +12,16 @@ class PagoCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
       child: ListTile(
-        leading: const Text("💰"),
-        title: Text("${pago.conductor} — ${formatCurrency(pago.monto)}"),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Fecha: ${formatDate(pago.fecha)}"),
-            Text("Semana ID: ${pago.semanaId}"),
-            Text("Hasta: ${formatDate(pago.endOfCorrespondingWeek)}"),
-          ],
+        leading: const Text("💰", style: TextStyle(fontSize: 20)),
+        // 🔹 Smaller fecha row
+        title: Text(
+          "Fecha de pago: ${formatDateWithWeekday(pago.fecha)}",
+          style: const TextStyle(fontSize: 14, color: Colors.grey),
+        ),
+        // 🔹 Bigger monto row
+        subtitle: Text(
+          "Monto: ${formatCurrency(pago.monto)}",
+          style: const TextStyle(fontSize: 18, color: Colors.black),
         ),
       ),
     );
