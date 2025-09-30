@@ -52,7 +52,7 @@ class _AppDrawerState extends State<AppDrawer> {
             child: ListView(
               children: [
                 ListTile(
-                  title: const Text("📊 Reportes"),
+                  title: const Text("📊 Reportes diarios"),
                   onTap: () =>
                       Navigator.pushReplacementNamed(context, '/reportes'),
                 ),

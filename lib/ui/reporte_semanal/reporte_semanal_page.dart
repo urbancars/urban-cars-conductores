@@ -8,9 +8,9 @@ import '../../bloc/reporte_semanal/reporte_semanal_state.dart';
 import '../../data/repositories/reporte_semanal_repository.dart';
 import '../../data/services/api_service.dart';
 import '../../config.dart';
-import '../utils/formatters.dart';
 import '../widgets/app_drawer.dart';
-import 'reporte_semanal_detail_page.dart'; // ✅ import detail page
+import '../widgets/refreshable_bloc_page.dart';
+import '../widgets/reporte_semanal_card.dart'; // ✅ new card widget
 
 class ReporteSemanalPage extends StatelessWidget {
   const ReporteSemanalPage({super.key});
@@ -48,60 +48,36 @@ class ReporteSemanalPage extends StatelessWidget {
             drawer: const AppDrawer(),
             body: BlocBuilder<ReporteSemanalBloc, ReporteSemanalState>(
               builder: (context, state) {
-                if (state is ReporteSemanalLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (state is ReporteSemanalLoaded) {
-                  if (state.reportes.isEmpty) {
-                    return const Center(
-                      child: Text("No hay reportes semanales."),
+                return RefreshableBlocPage(
+                  onRefresh: (ctx) async {
+                    ctx.read<ReporteSemanalBloc>().add(
+                      FetchReporteSemanal(driverId: driverId),
                     );
-                  }
-                  return ListView.builder(
-                    itemCount: state.reportes.length,
-                    itemBuilder: (context, index) {
-                      final r = state.reportes[index];
-                      return Card(
-                        margin: const EdgeInsets.symmetric(
-                          vertical: 6,
-                          horizontal: 12,
-                        ),
-                        child: ListTile(
-                          leading: const Text("📅"),
-                          title: Text("Semana ${r.semanaId}"),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "💵 Efectivo: ${formatCurrency(r.efectivo)}",
-                              ),
-                              Text(
-                                "💳 No efectivo: ${formatCurrency(r.noEfectivo)}",
-                              ),
-                              Text(
-                                "⛽ Combustible: ${formatCurrency(r.combustible)}",
-                              ),
-                              Text("⚠️ Deuda: ${formatCurrency(r.deuda)}"),
-                              Text("🎯 Bono: ${formatCurrency(r.bonoSemanal)}"),
-                            ],
-                          ),
-                          onTap: () {
-                            // ✅ navigate to detail page
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    ReporteSemanalDetailPage(reporte: r),
-                              ),
-                            );
-                          },
-                        ),
+                  },
+                  builder: (ctx) {
+                    if (state is ReporteSemanalLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (state is ReporteSemanalLoaded) {
+                      if (state.reportes.isEmpty) {
+                        return const Center(
+                          child: Text("No hay reportes semanales."),
+                        );
+                      }
+                      return ListView.builder(
+                        itemCount: state.reportes.length,
+                        itemBuilder: (context, index) {
+                          final r = state.reportes[index];
+                          return ReporteSemanalCard(
+                            reporte: r,
+                          ); // ✅ use card widget
+                        },
                       );
-                    },
-                  );
-                } else if (state is ReporteSemanalError) {
-                  return Center(child: Text("❌ Error: ${state.message}"));
-                }
-                return const SizedBox.shrink();
+                    } else if (state is ReporteSemanalError) {
+                      return Center(child: Text("❌ Error: ${state.message}"));
+                    }
+                    return const SizedBox.shrink();
+                  },
+                );
               },
             ),
           ),

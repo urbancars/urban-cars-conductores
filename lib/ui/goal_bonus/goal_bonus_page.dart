@@ -10,6 +10,7 @@ import '../../data/services/api_service.dart';
 import '../../config.dart';
 import '../utils/formatters.dart';
 import '../widgets/app_drawer.dart';
+import '../widgets/refreshable_bloc_page.dart'; // ✅ added
 
 class GoalBonusPage extends StatelessWidget {
   const GoalBonusPage({super.key});
@@ -47,40 +48,49 @@ class GoalBonusPage extends StatelessWidget {
             drawer: AppDrawer(),
             body: BlocBuilder<GoalBonusBloc, GoalBonusState>(
               builder: (context, state) {
-                if (state is GoalBonusLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (state is GoalBonusLoaded) {
-                  if (state.bonuses.isEmpty) {
-                    return const Center(child: Text("No hay bonos aún."));
-                  }
-                  return ListView.builder(
-                    itemCount: state.bonuses.length,
-                    itemBuilder: (context, index) {
-                      final bonus = state.bonuses[index];
-                      return Card(
-                        margin: const EdgeInsets.symmetric(
-                          vertical: 6,
-                          horizontal: 12,
-                        ),
-                        child: ListTile(
-                          leading: const Text("🎯"),
-                          title: Text("Semana: ${bonus.semana}"),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Conductor: ${bonus.conductorId}"),
-                              Text("Monto: ${formatCurrency(bonus.monto)}"),
-                              Text("Porcentaje: ${bonus.porcentaje}%"),
-                            ],
-                          ),
-                        ),
+                return RefreshableBlocPage(
+                  onRefresh: (ctx) async {
+                    ctx.read<GoalBonusBloc>().add(
+                      FetchGoalBonus(driverId: driverId),
+                    );
+                  },
+                  builder: (ctx) {
+                    if (state is GoalBonusLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (state is GoalBonusLoaded) {
+                      if (state.bonuses.isEmpty) {
+                        return const Center(child: Text("No hay bonos aún."));
+                      }
+                      return ListView.builder(
+                        itemCount: state.bonuses.length,
+                        itemBuilder: (context, index) {
+                          final bonus = state.bonuses[index];
+                          return Card(
+                            margin: const EdgeInsets.symmetric(
+                              vertical: 6,
+                              horizontal: 12,
+                            ),
+                            child: ListTile(
+                              leading: const Text("🎯"),
+                              title: Text("Semana: ${bonus.semana}"),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Conductor: ${bonus.conductorId}"),
+                                  Text("Monto: ${formatCurrency(bonus.monto)}"),
+                                  Text("Porcentaje: ${bonus.porcentaje}%"),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
                       );
-                    },
-                  );
-                } else if (state is GoalBonusError) {
-                  return Center(child: Text("❌ Error: ${state.message}"));
-                }
-                return const SizedBox.shrink();
+                    } else if (state is GoalBonusError) {
+                      return Center(child: Text("❌ Error: ${state.message}"));
+                    }
+                    return const SizedBox.shrink();
+                  },
+                );
               },
             ),
           ),

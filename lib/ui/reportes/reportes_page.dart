@@ -9,6 +9,7 @@ import '../../data/repositories/reportes_repository.dart';
 import '../../data/services/api_service.dart';
 import '../../ui/widgets/reporte_card.dart';
 import '../../ui/widgets/app_drawer.dart';
+import '../../ui/widgets/refreshable_bloc_page.dart';
 import '../../config.dart';
 
 class ReportesPage extends StatelessWidget {
@@ -44,27 +45,38 @@ class ReportesPage extends StatelessWidget {
             ReportesRepository(ApiService(baseUrl: AppConfig.apiUrl)),
           )..add(FetchReportes(driverId: driverId)),
           child: Scaffold(
-            appBar: AppBar(title: const Text("Reportes")),
+            appBar: AppBar(title: const Text("Reportes diarios")),
             drawer: AppDrawer(),
             body: BlocBuilder<ReportesBloc, ReportesState>(
               builder: (context, state) {
-                if (state is ReportesLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (state is ReportesLoaded) {
-                  if (state.reportes.isEmpty) {
-                    return const Center(child: Text("📭 No hay reportes aún."));
-                  }
-                  return ListView.builder(
-                    itemCount: state.reportes.length,
-                    itemBuilder: (context, index) {
-                      final r = state.reportes[index];
-                      return ReporteCard(reporte: r);
-                    },
-                  );
-                } else if (state is ReportesError) {
-                  return Center(child: Text("❌ Error: ${state.message}"));
-                }
-                return const SizedBox.shrink();
+                return RefreshableBlocPage(
+                  onRefresh: (ctx) async {
+                    ctx.read<ReportesBloc>().add(
+                      FetchReportes(driverId: driverId),
+                    );
+                  },
+                  builder: (ctx) {
+                    if (state is ReportesLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (state is ReportesLoaded) {
+                      if (state.reportes.isEmpty) {
+                        return const Center(
+                          child: Text("📭 No hay reportes aún."),
+                        );
+                      }
+                      return ListView.builder(
+                        itemCount: state.reportes.length,
+                        itemBuilder: (context, index) {
+                          final r = state.reportes[index];
+                          return ReporteCard(reporte: r);
+                        },
+                      );
+                    } else if (state is ReportesError) {
+                      return Center(child: Text("❌ Error: ${state.message}"));
+                    }
+                    return const SizedBox.shrink();
+                  },
+                );
               },
             ),
           ),

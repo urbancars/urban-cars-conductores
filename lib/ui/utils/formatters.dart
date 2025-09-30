@@ -63,3 +63,16 @@ String formatDateWithWeekday(dynamic value) {
     return value.toString();
   }
 }
+
+/// Format distance with 1 decimal place
+String formatDistance(dynamic value) {
+  if (value == null) return "0.0 km";
+  try {
+    final parsed = value is num
+        ? value.toDouble()
+        : double.parse(value.toString());
+    return "${parsed.toStringAsFixed(1)} km";
+  } catch (_) {
+    return "0.0 km";
+  }
+}
